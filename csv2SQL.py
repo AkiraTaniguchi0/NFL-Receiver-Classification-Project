@@ -12,6 +12,53 @@ all_files = glob.glob(path + "/*.csv")
 #https://stackoverflow.com/questions/56949605/how-to-read-each-file-from-a-folder-and-create-seperate-data-frames-for-each-fil
 d = {os.path.splitext(os.path.basename(f))[0] : pd.read_csv(f) for f in all_files} 
 
+def concatDF(d, startswith):
+#create a list of tuples where each tuple is (name of csv,dataframe)
+#https://stackoverflow.com/questions/10795973/python-dictionary-search-values-for-keys-using-regular-expression
+    tup_list = [(key, value) for key, value in d.items() if key.startswith(startswith)]
+
+    #add year column to each dataframe
+    for entry in tup_list:
+        if 'year' not in entry[1].columns:
+            name = entry[0][len(entry[0]) - 2:]
+            year = "20"+name
+            entry[1].insert(0, 'year', int(year))
+
+    #concat dfs in list into one df
+    concatedDF = pd.DataFrame()
+    for i in tup_list:
+        concatedDF = pd.concat([concatedDF,i[1]])
+    
+    return concatedDF
+
+def create_sqlite_database(filename):
+    """ create a database connection to an SQLite database """
+    conn = None
+    try:
+        conn = sqlite3.connect(filename)
+        print(sqlite3.sqlite_version)
+    except sqlite3.Error as e:
+        print(e)
+    finally:
+        if conn:
+            conn.close()
+
+nfl_all = concatDF(d, "nfl_")
+ncaa_all = concatDF(d, "ncaa_")
+
+
+if __name__ == '__main__':
+    create_sqlite_database("data/receiving_data.db")
+
+conn = sqlite3.connect('data/receiving_data.db')
+
+nfl_all.to_sql('NFL', conn, if_exists='fail')
+ncaa_all.to_sql('NCAA', conn, if_exists='fail')
+conn.close()
+
+
+
+"""
 #create a list of tuples where each tuple is (name of csv,dataframe)
 #https://stackoverflow.com/questions/10795973/python-dictionary-search-values-for-keys-using-regular-expression
 ncaa_list = [(key, value) for key, value in d.items() if key.startswith("ncaa_")]
@@ -40,28 +87,4 @@ for entry in nfl_list:
 nfl_all = pd.DataFrame()
 for i in nfl_list:
     nfl_all = pd.concat([nfl_all,i[1]])
-
-
-
-def create_sqlite_database(filename):
-    """ create a database connection to an SQLite database """
-    conn = None
-    try:
-        conn = sqlite3.connect(filename)
-        print(sqlite3.sqlite_version)
-    except sqlite3.Error as e:
-        print(e)
-    finally:
-        if conn:
-            conn.close()
-
-
-if __name__ == '__main__':
-    create_sqlite_database("data/receiving_data.db")
-
-conn = sqlite3.connect('data/receiving_data.db')
-
-nfl_all.to_sql('NFL', conn, if_exists='fail')
-ncaa_all.to_sql('NCAA', conn, if_exists='fail')
-conn.close()
-
+"""
