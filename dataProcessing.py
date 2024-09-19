@@ -5,7 +5,7 @@ import sqlite3
 from collections import Counter
 
 #Query all receiving data from both tables by the Wide Receiver position
-con = sqlite3.connect("data/receiving_data.db")
+con = sqlite3.connect("raw_data/receiving_data.db")
 cur = con.cursor()
 
 nflWR = pd.read_sql_query("SELECT * from NFL where position == 'WR'", con)
@@ -82,5 +82,5 @@ for idx,row in players.iterrows():
 data = final_season
 labels = players
 
-data.to_csv('data/data.csv', index=False)
-labels.to_csv('data/labels.csv', index=False)
+data.to_csv('final_data/data.csv', index=False)
+labels.to_csv('final_data/labels.csv', index=False)

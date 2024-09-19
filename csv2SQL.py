@@ -5,7 +5,7 @@ import sqlite3
 from collections import Counter
 
 #Get all the data file names  in the data folder
-path = r'data' 
+path = r'raw_data' 
 all_files = glob.glob(path + "/*.csv")
 
 #Create a dictionary where every key is the name of the csv file and the value that corresponds is the csv file converted to a pandas dataframe.
@@ -48,9 +48,9 @@ ncaa_all = concatDF(d, "ncaa_")
 
 
 if __name__ == '__main__':
-    create_sqlite_database("data/receiving_data.db")
+    create_sqlite_database("raw_data/receiving_data.db")
 
-conn = sqlite3.connect('data/receiving_data.db')
+conn = sqlite3.connect('raw_data/receiving_data.db')
 
 nfl_all.to_sql('NFL', conn, if_exists='fail')
 ncaa_all.to_sql('NCAA', conn, if_exists='fail')
