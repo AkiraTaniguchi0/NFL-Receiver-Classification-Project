@@ -1,8 +1,6 @@
 # Predicting the Success of NFL Wide Receivers Based on their College Careers Using Classification Models
 Consolidated 2014-2023 NCAA and NFL player data from csv files into a SQLite database. Performed data cleaning, feature selection, data standardization, and dimensionality reduction on receiving data from the wide receiver position to run 7 different classification models to see if a successful season in the NFL can be predicted by a wide receiver player based on their college performance.
 
-![alt tag](http://placecorgi.com/1200/650)
-
 ## Files:
 
 **Tech used:** Python, SQLite, Microsoft Excel
